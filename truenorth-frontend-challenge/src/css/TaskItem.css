@@ -1,0 +1,46 @@
+.task-card {
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  padding: 0.5rem;
+  margin: 1rem;
+  border-radius: 12px;
+  background-color: #dddddd;
+  height: 200px;
+  width: 200px;
+}
+
+.task-item {
+  margin: auto;
+  margin-bottom: auto;
+}
+
+.task-item p {
+  font-weight: bold;
+  font-size: large;
+}
+
+.task-item button {
+  font-weight: bold;
+  color: white;
+  background-color: #12b375b7;
+  border: 1px solid white;
+  padding: 0.5rem;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  width: 140px;
+  height: 45px;
+  text-align: center;
+  cursor: not-allowed;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.task-item button.false {
+  background-color: #b3121ab7;
+  cursor: pointer;
+}

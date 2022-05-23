@@ -1,0 +1,116 @@
+## x-api-key: bAa5TZ4JrZ5r7CWaBso5v94eAuz4phZU56rqEt0f
+
+service: ACFTASKS001
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: DEV
+  environment:
+    TASK_TABLE: DYN-${opt:stage, self:provider.stage}-TASKS
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:BatchWriteItem
+        - dynamodb:UpdateItem
+      Resource: "*"
+
+package:
+ exclude:
+  - node_modules/aws-sdk/**
+
+plugins:
+  - serverless-offline
+
+functions:
+  createTask:
+    handler: src/controller.createTask
+    memorySize: 128
+    description: Creates tasks and saves them to a DynamoDB Table.
+    events:
+      - http: 
+          path: tasks/create
+          method: get
+          private: true
+          integration: lambda
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Credentials: "'true'"
+              X-Content-Type-Options: "'nosniff'"
+              X-XSS-Protection: "'1; mode=block'"
+              X-Frame-Options: "'SAMEORIGIN'"
+              Referrer-Policy: "'no-referrer-when-downgrade'"
+              Strict-Transport-Security: "'max-age=31536000; includeSubDomains'"
+  getTasks:
+    handler: src/controller.getTasks
+    memorySize: 128
+    description: Retrieves tasks stored in a DynamoDB Table.
+    events:
+      - http: 
+          path: tasks/get
+          method: get
+          private: true
+          integration: lambda
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Credentials: "'true'"
+              X-Content-Type-Options: "'nosniff'"
+              X-XSS-Protection: "'1; mode=block'"
+              X-Frame-Options: "'SAMEORIGIN'"
+              Referrer-Policy: "'no-referrer-when-downgrade'"
+              Strict-Transport-Security: "'max-age=31536000; includeSubDomains'"
+  updateTasks:
+    handler: src/controller.updateTask
+    memorySize: 128
+    description: Updates a task stored in a DynamoDB Table.
+    events:
+      - http: 
+          path: tasks/update
+          method: put
+          private: true
+          integration: lambda
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Credentials: "'true'"
+              X-Content-Type-Options: "'nosniff'"
+              X-XSS-Protection: "'1; mode=block'"
+              X-Frame-Options: "'SAMEORIGIN'"
+              Referrer-Policy: "'no-referrer-when-downgrade'"
+              Strict-Transport-Security: "'max-age=31536000; includeSubDomains'"
+

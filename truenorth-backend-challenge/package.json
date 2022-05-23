@@ -1,0 +1,22 @@
+{
+  "name": "package.json",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage --silent",
+    "test-coverage": "jest --coverage",
+    "start": "serverless offline start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "serverless": "^2.69.1",
+    "serverless-offline": "^5.12.1",
+    "aws-sdk": "2.1138.0"
+  }
+}

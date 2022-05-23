@@ -1,0 +1,13 @@
+  .dialog-box-title {
+    color: #000000;
+    font-weight: bold;
+  }
+
+  .dialog-box-message {
+    color: #000000 !important;
+    font-size: 1.9rem !important
+  }
+
+  .dialog-box-actions {
+    font-size: 1.1rem !important
+  }
