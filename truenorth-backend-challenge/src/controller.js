@@ -1,10 +1,11 @@
 const taskService = require('./service');
+const AppException = require('./utils/AppException');
 
 module.exports = {
 
     async createTask(event) {
 
-        const quantity = event.query ? event.query.quantity : 3;
+        const quantity = event.quantity || 3;
         let titles;
 
         try {
@@ -54,36 +55,28 @@ module.exports = {
 
     async updateTask(event) {
 
-        try {
-            let filter = event.body;
+        let filter = event;
 
-            const getTask = await taskService.getTasks({ field: 'taskId', value: filter.taskId });
-            console.log(getTask);
+        const getTask = await taskService.getTasks({ field: 'taskId', value: filter.taskId });
+        console.log(getTask);
 
-            if (getTask.Items && getTask.Items.length > 0) {
+        if (getTask.Items && getTask.Items.length > 0) {
 
-                const updateTask = await taskService.updateTask(filter);
-                console.log('updateTask', updateTask);
+            const updateTask = await taskService.updateTask(filter);
+            console.log('updateTask', updateTask);
 
-                return {
-                    statusCode: 200,
-                    payload: {
-                        taskUpdated: filter.taskId
-                    },
-                };
-
-            } else {
-                throw new Error('Submitted taskId does not exist');
-            }
-
-        } catch (err) {
-            console.log('error', err.message);
             return {
-                statusCode: 500,
+                statusCode: 200,
                 payload: {
-                    message: err.message
+                    taskUpdated: filter.taskId
                 },
             };
+
+        } else {
+            new AppException(
+                'ERR-002',
+                'Submitted taskId does not exist.'
+            ).throw();
         }
     }
 };

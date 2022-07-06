@@ -28,14 +28,14 @@ plugins:
 
 functions:
   createTask:
-    handler: src/controller.createTask
+    handler: src/app.handler
     memorySize: 128
     description: Creates tasks and saves them to a DynamoDB Table.
     events:
       - http: 
           path: tasks/create
           method: get
-          private: true
+          #private: true
           integration: lambda
           cors:
             origin: '*'
@@ -46,24 +46,15 @@ functions:
               - X-Api-Key
               - X-Amz-Security-Token
               - X-Amz-User-Agent
+          request:
+            template:
+              application/json: ${file(src/serverless/request/createTask.vm)}
           response:
-            headers:
-              Access-Control-Allow-Origin: "'*'"
-              Access-Control-Allow-Credentials: "'true'"
-              X-Content-Type-Options: "'nosniff'"
-              X-XSS-Protection: "'1; mode=block'"
-              X-Frame-Options: "'SAMEORIGIN'"
-              Referrer-Policy: "'no-referrer-when-downgrade'"
-              Strict-Transport-Security: "'max-age=31536000; includeSubDomains'"
-  getTasks:
-    handler: src/controller.getTasks
-    memorySize: 128
-    description: Retrieves tasks stored in a DynamoDB Table.
-    events:
+            ${file(src/serverless/http-response.yaml)}
       - http: 
           path: tasks/get
           method: get
-          private: true
+          #private: true
           integration: lambda
           cors:
             origin: '*'
@@ -74,43 +65,21 @@ functions:
               - X-Api-Key
               - X-Amz-Security-Token
               - X-Amz-User-Agent
-            allowCredentials: false
+          request:
+            template:
+              application/json: ${file(src/serverless/request/getTasks.vm)}
           response:
-            headers:
-              Access-Control-Allow-Origin: "'*'"
-              Access-Control-Allow-Credentials: "'true'"
-              X-Content-Type-Options: "'nosniff'"
-              X-XSS-Protection: "'1; mode=block'"
-              X-Frame-Options: "'SAMEORIGIN'"
-              Referrer-Policy: "'no-referrer-when-downgrade'"
-              Strict-Transport-Security: "'max-age=31536000; includeSubDomains'"
-  updateTasks:
-    handler: src/controller.updateTask
-    memorySize: 128
-    description: Updates a task stored in a DynamoDB Table.
-    events:
+            ${file(src/serverless/http-response.yaml)}
       - http: 
           path: tasks/update
           method: put
-          private: true
+          #private: true
           integration: lambda
           cors:
             origin: '*'
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-            allowCredentials: false
+          request:
+            template:
+              application/json: ${file(src/serverless/request/updateTask.vm)}
           response:
-            headers:
-              Access-Control-Allow-Origin: "'*'"
-              Access-Control-Allow-Credentials: "'true'"
-              X-Content-Type-Options: "'nosniff'"
-              X-XSS-Protection: "'1; mode=block'"
-              X-Frame-Options: "'SAMEORIGIN'"
-              Referrer-Policy: "'no-referrer-when-downgrade'"
-              Strict-Transport-Security: "'max-age=31536000; includeSubDomains'"
+            ${file(src/serverless/http-response.yaml)}
 
