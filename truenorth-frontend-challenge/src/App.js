@@ -19,8 +19,10 @@ function App() {
           'x-api-key': 'bAa5TZ4JrZ5r7CWaBso5v94eAuz4phZU56rqEt0f'
         }
       });
+
+      console.log('resAPI', resAPI);
       
-      const payload = resAPI.data.payload
+      const payload = resAPI.data.payload.payload
 
       setTasks(payload.Items);
 
@@ -54,9 +56,11 @@ function App() {
       if(task){
 
         const request = {
-          taskId: task.taskId,
-          field: "isCompleted",
-          value: true
+          payload: {
+            taskId: task.taskId,
+            field: "isCompleted",
+            value: true
+          }
         }
 
         const resAPI = await axios.put('https://k4b3cwn6xk.execute-api.us-east-1.amazonaws.com/DEV/tasks/update', request, {
@@ -65,7 +69,7 @@ function App() {
           }
         });
 
-        console.log(resAPI);
+        console.log('resAPI Update',resAPI);
         
         await getTasks();
       }
