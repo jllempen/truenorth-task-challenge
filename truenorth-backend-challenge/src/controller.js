@@ -17,27 +17,17 @@ module.exports = {
             console.log('error', err.message);
             new AppException(
                 'ERR-002',
-                'Error while retrieveng data'
+                'Error creating tasks'
             ).throw();
         }
     },
 
     async getTasks() {
 
-        try {
+        const getTasks = await TaskService.getTasks();
+        console.log(getTasks);
 
-            const getTasks = await TaskService.getTasks();
-            console.log(getTasks);
-
-            return getTasks;
-
-        } catch (err) {
-            console.log('error', err.message);
-            new AppException(
-                'ERR-002',
-                'Error while retrieveng data.'
-            ).throw();
-        }
+        return getTasks;
     },
 
     async updateTask(payload) {
