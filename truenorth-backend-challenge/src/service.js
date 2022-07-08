@@ -1,17 +1,24 @@
 const { v4: uuidv4 } = require('uuid');
-const dataAccess = require('./data-access');
+const DataAccess = require('./data-access');
+const AppException = require('./utils/AppException');
 
-module.exports = {
+class TaskService {
 
-    async createTask(quantity) {
+    static async createTask(quantity) {
 
+        const tableName = process.env.TASK_TABLE;
         const batchLimit = 25;
         let titles;
 
-        titles = await dataAccess.getTitles(quantity);
+        try {
+            titles = await DataAccess.getTitles(quantity);
 
-        if (titles.length == 0) {
-            throw new Error('Quantity must be grater than zero.');
+        } catch (err) {
+            console.log('err', err);
+            new AppException(
+                'ERR-002',
+                'There was an error while retrieving tasks titles.'
+            ).throw();
         }
 
         for (let i = 0; i < titles.length; i += batchLimit) {
@@ -27,34 +34,63 @@ module.exports = {
                         }
                     }
                 };
-            })
-
+            });
             console.log('tasksToSave', tasksToSave.length);
 
-            const tableName = process.env.TASK_TABLE;
-            await dataAccess.createTasks(tableName, tasksToSave);
+            try {
+                await DataAccess.createTasks(tableName, tasksToSave);
+
+            } catch (err) {
+                console.log('err', err);
+                new AppException(
+                    'ERR-002',
+                    'There was an error while saving tasks into the database.'
+                ).throw();
+            }
         }
 
         return titles;
-    },
+    }
 
-    async getTasks(filter) {
+    static async getTasks(filter) {
+
+        console.log('filter', filter);
 
         const tableName = process.env.TASK_TABLE;
 
-        console.log('filter', filter)
+        let getTasks = []
 
-        let getTasks = await dataAccess.getTasks(tableName, filter);
-        console.log('getTasks', getTasks);
+        try {
+            getTasks = await DataAccess.getTasks(tableName, filter);
+            console.log('getTasks', getTasks);
+
+        } catch (err) {
+            console.log('err', err);
+            new AppException(
+                'ERR-002',
+                'There was an error while retrieving tasks from the database.'
+            ).throw();
+        }
 
         return getTasks;
-    },
-
-    async updateTask(filter) {
-
-        const tableName = process.env.TASK_TABLE;
-
-        const updateTask = await dataAccess.updateTask(tableName, filter);
-        console.log('updateTask', updateTask);
     }
-};
+
+    static async updateTask(filter) {
+
+        try {
+            const tableName = process.env.TASK_TABLE;
+
+            const updateTask = await DataAccess.updateTask(tableName, filter);
+            console.log('updateTask', updateTask);
+
+        } catch (err) {
+            console.log('err', err);
+            new AppException(
+                'ERR-002',
+                'There was an error while updating tasks to the database.'
+            ).throw();
+        }
+    }
+}
+
+module.exports = TaskService;

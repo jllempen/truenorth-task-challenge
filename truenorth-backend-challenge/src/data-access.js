@@ -1,81 +1,60 @@
 const axios = require('axios').default;
 const AWS = require('aws-sdk');
-
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
+const AppException = require('./utils/AppException');
 
-module.exports = {
 
-    async getTitles(quantity) {
+class TaskDB {
+
+    static async getTitles(quantity) {
 
         let resultTitles;
+        resultTitles = await axios.get(`https://lorem-faker.vercel.app/api?quantity=${quantity}`);
 
-        try {
-            resultTitles = await axios.get(`https://lorem-faker.vercel.app/api?quantity=${quantity}`);
+        return resultTitles ? resultTitles.data : [];
+    }
 
-            return resultTitles.data || [];
+    static async createTasks(tableName, items) {
 
-        } catch (err) {
-            throw new Error('There was an error while retrieving tasks titles. ' + err);
-        }
-    },
-
-    async createTasks(tableName, items) {
-
-        try {
-            return dynamoDB.batchWrite({
-                RequestItems: {
-                    [tableName]: items
-                }
-            }).promise();
-
-        } catch (err) {
-            throw new Error('There was an error while saving tasks into the database. ' + err);
-        }
-    },
-
-    async getTasks(tableName, filter) {
-
-        try {
-
-            let params = {
-                TableName: tableName
-            };
-
-            if(filter){
-                params.FilterExpression = `${filter.field} = :value`;
-                params.ExpressionAttributeValues = { ':value': filter.value };
+        return dynamoDB.batchWrite({
+            RequestItems: {
+                [tableName]: items
             }
+        }).promise();
+    }
 
-            console.log('params',params);
+    static async getTasks(tableName, filter) {
 
-            return dynamoDB.scan(params).promise();
+        let params = {
+            TableName: tableName
+        };
 
-        } catch (err) {
-            throw new Error('There was an error while retrieving tasks from the database. ' + err);
+        if (filter) {
+            params.FilterExpression = `${filter.field} = :value`;
+            params.ExpressionAttributeValues = { ':value': filter.value };
         }
-    },
 
-    async updateTask(tableName, filter) {
+        console.log('params', params);
+
+        return dynamoDB.scan(params).promise();
+    }
+
+    static async updateTask(tableName, filter) {
 
         console.log('filter', filter);
+        let params = {
+            TableName: tableName,
+            Key: { taskId: filter.taskId },
+            UpdateExpression: `set ${filter.field} = :value`,
+            ExpressionAttributeValues: {
+                ':value': filter.value
+            }
+        };
 
-        try {
+        console.log(params);
 
-            let params = {
-                TableName: tableName,
-                Key: { taskId: filter.taskId },
-                UpdateExpression: `set ${filter.field} = :value`,
-                ExpressionAttributeValues: {
-                    ':value': filter.value
-                }
-            };
-
-            console.log(params);
-
-            return dynamoDB.update(params).promise();
-
-        } catch (err) {
-            throw new Error('There was an error while updating tasks to the database. ' + err);
-        }
+        return dynamoDB.update(params).promise();
     }
-};
+}
+
+module.exports = TaskDB;

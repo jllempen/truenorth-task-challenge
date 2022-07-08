@@ -11,7 +11,7 @@ let middlewares = [];
 const apiGateway = ApiGatewayEvent();
 middlewares.push(apiGateway);
 
-function bootstrap(controller) {
+const bootstrap = (controller) => {
     const handler = middy(async () => controller);
 
     middlewares.forEach((obj) => {

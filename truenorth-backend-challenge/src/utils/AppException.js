@@ -3,11 +3,12 @@ class AppException extends Error{
         code,
         message,
         exception,
+        name
     ) {
         super();
         this.code = code;
         this.message = Array.isArray(message) ? message : [message];
-        this.name = 'ValidationException';
+        this.name = name || 'LogicExpection';
         if (exception) {
           console.log(exception);
         }

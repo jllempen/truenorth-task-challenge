@@ -59,7 +59,7 @@ module.exports = () => {
           ...handler.error,
         };
                 
-        if (error.name === 'BusinessException') {
+        if (error.name === 'LogicExpection') {
           error.httpStatus = 422;
         } else if (error.name === 'ValidationException') {
           error.httpStatus = 400;

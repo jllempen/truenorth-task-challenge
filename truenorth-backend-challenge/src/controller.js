@@ -1,33 +1,24 @@
-const taskService = require('./service');
+const TaskService = require('./service');
 const AppException = require('./utils/AppException');
 
 module.exports = {
 
-    async createTask(event) {
+    async createTask(payload) {
 
-        const quantity = event.quantity || 3;
-        let titles;
+        const quantity = payload.quantity || 3;
 
         try {
-            titles = await taskService.createTask(quantity);
+            const titles = await TaskService.createTask(quantity);
 
-            return {
-                statusCode: 200,
-                payload: {
-                    itemsSaved: titles,
-                    itesCount: titles.length
-                },
-            };
-
+            console.log(titles);
+            return titles;
 
         } catch (err) {
             console.log('error', err.message);
-            return {
-                statusCode: 500,
-                payload: {
-                    message: err.message
-                },
-            };
+            new AppException(
+                'ERR-002',
+                'Error while retrieveng data'
+            ).throw();
         }
     },
 
@@ -35,42 +26,33 @@ module.exports = {
 
         try {
 
-            const getTasks = await taskService.getTasks();
+            const getTasks = await TaskService.getTasks();
+            console.log(getTasks);
 
-            return {
-                statusCode: 200,
-                payload: getTasks
-            };
+            return getTasks;
 
         } catch (err) {
             console.log('error', err.message);
-            return {
-                statusCode: 500,
-                payload: {
-                    message: err.message
-                }
-            };
+            new AppException(
+                'ERR-002',
+                'Error while retrieveng data.'
+            ).throw();
         }
     },
 
-    async updateTask(event) {
+    async updateTask(payload) {
 
-        let filter = event;
+        let filter = payload;
 
-        const getTask = await taskService.getTasks({ field: 'taskId', value: filter.taskId });
+        const getTask = await TaskService.getTasks({ field: 'taskId', value: filter.taskId });
         console.log(getTask);
 
         if (getTask.Items && getTask.Items.length > 0) {
 
-            const updateTask = await taskService.updateTask(filter);
+            const updateTask = await TaskService.updateTask(filter);
             console.log('updateTask', updateTask);
 
-            return {
-                statusCode: 200,
-                payload: {
-                    taskUpdated: filter.taskId
-                },
-            };
+            return updateTask;
 
         } else {
             new AppException(
